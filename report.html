@@ -13197,12 +13197,12 @@ It is a ratio of true positives(words classified as spam, and which are actually
 <li>Given that we want to predict whether or not a person makes more than \$50K per year, logistic regression would be a good choice because it would estimate the likelihood that a person makes the required amount. We could then provide CharityML with a ranking of which people to prioritize contacting based on the examples that produce the highest probability.</li>
 </ul>
 </li>
-<li><p><strong>Stochastic Gradient Decent</strong></p>
+<li><p><strong>Linear SVM trained with Stochastic Gradient Decent</strong></p>
 <ul>
-<li>SGD has applications almost anywhere machine learning can be found, but as an example of SGD classification, consider market segmentation to determine whether or not a customer would switch from a free service to a paid service.</li>
-<li>SGD is very lightweight and efficient. It also provides a lot of opportunity for optimization since it is fairly easy to implement. SGD performs well under most circumstances, including large training sets with lots of features.</li>
-<li>SGD can require a lot of tuning since it depends on a variety of hyperparameters. SGD is also sensitive to feature scaling, so proper data normalization is important. </li>
-<li>Because SGD is an iterative algorithm, it is fairly flexible and scalable, which makes it a natural consideration for a classification problems like this.</li>
+<li>One application of SVMs is market segmentation to determine whether or not a customer would switch from a free service to a paid service.</li>
+<li>Linear SVMs are good for defining planar decision boundaries (meaning the data is linearly seperable). When optimized with SGD the algorithm can accommodate large training sets that include many features.</li>
+<li>SGD can require a lot of tuning since it depends on a variety of hyperparameters. It is also sensitive to feature scaling, so proper data normalization is important. </li>
+<li>Nothing about our data implies a complex, non-linear decision boundary, so a linear SVM is certainly applicable. Our data has also been properly normalized, which will help with the opimization. We can reasonalby assume that there is natural boundary past which people make more \$50K per year, and SVMs do particularly well in these situations because they consider margin in addition to classification accuracy.</li>
 </ul>
 </li>
 </ol>
@@ -14175,6 +14175,7 @@ Look at the graph at the bottom left from the cell above(the visualization creat
 <p><strong>Answer: </strong>
 I would recommend using <em>Logistic Regression</em> for this data set. The algorithm performed best overall according to the F-beta score, which is a more reliable metric for this dataset. Accuracy score can be misleading because it doesn't account for skewed data. In our dataset, only a quarter of the examples are positive. Also, false positives are more worrisome in our case since we want to make sure we are only asking those who would be willing to donate (thus we want a high precision model). Using an F-beta score with beta = 0.5 means we are giving precision more weight than recall, which is why this metric is more appropriate for the data.</p>
 <p>Logistic regression was able to produce an accuracy score of nearly 85% on the test set, and performed similarly on the training set. While the <em>Decision Tree</em> model did perform better on the training set, that is likely because it overfit the data (as predicted) which can be verified from its relatively poorer performance on the test set.</p>
+<p>The <em>Linear SVM</em> also did very well according to our metrics, but it was not as consistent as Linear Regression (LR), which can be seen in the performance dip when evaluating 10% of the data. In reality, the SVM model would probably be just as suitable for the data given. However, LR has the additional benefit of a probabilistic interpretation, meaning we could use the probabilities that it assigns as an estimate of someone's likelihood to donate.</p>
 <p>There was a significant increase in training time when moving from 10% to 100% of the dataset, but the query time decreased each time we increased the size of the dataset. Both the training and prediction time are very low, so there is no real concern on the efficiency of the algorithm.</p>
 
 </div>
@@ -14200,7 +14201,7 @@ I would recommend using <em>Logistic Regression</em> for this data set. The algo
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong>
-Logistic regression is a method that attempts to determine how likely someone is to make more than \$50K per year based on a few of that person's attributes. There are two key steps in the learning process: modeling (training) and predicting. In the first phase, the model gains an intution for the data by making guesses and evaluating the results. When the algorithm makes a mistake, it adjusts the relative importance of a person's attributes. Ultimately it finds the best balance of factors to determine if someone could be a potential donor. In the prediction phase, the algorithm examines a person with an unknown level of income; it weighs the person's attributes according to their importance and combines the result to produce an estimated probability that the person's income is above \$50K. Finally, that probability is used to determine if someone is a potential donor by comparing it to a threshold value (usually 50%).</p>
+Logistic regression is a method that attempts to determine the likely that someone makes more than \$50K per year based on a few of that person's attributes. The key difference between linear and logistic regression is that the output for logistic regression is constrained to lie between 0 and 1 (thus we can interpret the results as probabilities). Ultimately, the algorithm is looking for a line that best separates the point representing those who make more than \$50K from everyone else. This line is found by computing the relative importance of each attribute so as to minimize misclassification errors. New points are then weighed according to the learned criteria and assigned a probability of being an potential donor. If that probability exceeds some threshold, say 0.5, then we consider that person a possible donor.</p>
 
 </div>
 </div>
@@ -14906,7 +14907,7 @@ F-score on testing data: 0.6480
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong>
-Interestingly, the final model's F-score and accuracy score both increased (by more than the optimizations from grid search!). It seem that using too many features has cuased some overfitting in the model, which is reduced by considering only a small subset of the most important features. The final model generalizes better to new data. Training time wasn't much of a factor here, but the reduced data would still be better to use.</p>
+The final model performed slightly worse on the reduced dataset, which suggests that we lost some information by discarding most of the features. However, neither the accuracy score nor the f-score decreased by more than 5%, meaning that the reduced dataset still represents data accurately. Using the reduced dataset would be advantageous because there are far fewer features to consider, and the performance is comportable to that of the full dataset.</p>
 
 </div>
 </div>
